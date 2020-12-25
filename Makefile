@@ -5,7 +5,7 @@ clean:
 
 ## Lint using flake8
 lint:
-	flake8 src
+	flake8 <YOUR_PROJECT_NAME>
 
 help:
 	@echo "lint - calls flake8 linting"

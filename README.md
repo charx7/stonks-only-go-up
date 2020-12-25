@@ -39,6 +39,9 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
+## 3. Change the Makefile
+* Change the name `<YOUR_PROJECT_NAME>` to your project name inside of the `Makefile`
+
 # Use your own custom package inside jupyter notebooks
 You have to append the ../src directory to the path of execution of the notebook.
 ```[python]
@@ -48,13 +51,13 @@ You have to append the ../src directory to the path of execution of the notebook
 # OPTIONAL: always reload modules so that as you change code in src, it gets loaded
 %autoreload 2
 
-# append the /src/ folder to the python path
+# append the /<YOUR_PROJECT_NAME>/ folder to the python path
 import sys
 
-if '../src' in sys.path:
+if '../<YOUR_PROJECT_NAME>' in sys.path:
     pass
 else:
-    sys.path.append('../src')
+    sys.path.append('../<YOUR_PROJECT_NAME>')
 ```
 Then you can test your imports with:
 ```
