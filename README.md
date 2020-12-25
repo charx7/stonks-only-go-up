@@ -62,3 +62,12 @@ from <YOUR_PROJECT_NAME>.data import test_imports
 test_imports.say_hello()
 >> hello
 ```
+
+# Optional
+## Add your own github repository to the project
+* List the current remote repos associated with the project
+```
+git remote
+git remote rm origin
+```
+* Now you can add your own github repository to the project
