@@ -1,10 +1,10 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='src',
+    name='stonks',
     packages=find_packages(),
     version='0.1.0',
-    description='Data Science POCs',
-    author='<YOUR_ORG_NAME>',
+    description='Trading Strategies for equity investments',
+    author='Carlos Huerta',
     license='MIT',
 )
