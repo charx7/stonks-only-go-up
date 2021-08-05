@@ -1,11 +1,16 @@
 import yfinance as yf
 import pandas as pd
+import logging
 
 from pypfopt import black_litterman
 from pypfopt.expected_returns import mean_historical_return
 from pypfopt.black_litterman import BlackLittermanModel
 from pypfopt.risk_models import CovarianceShrinkage
 from typing import Dict, List
+
+
+logging.basicConfig(filename='output.log', filemode='a',
+  format='%(asctime)s - %(levelname)-4s [%(filename)s:%(lineno)d] %(message)s', level=logging.INFO)
 
 
 class MarketModels:
@@ -21,7 +26,8 @@ class MarketModels:
     self.S = None  # covar matrix historical
     self.mu = None  # mean historical returns
 
-    # get the market prices for the sp500 -> risk free asset
+    # get the market prices for the sp500 -> main index asset
+    logging.info(f"Initiating download of the main index: 'sp500'")
     self.sp500 = yf.download("SPY", period="max")["Adj Close"]
 
     # bl params
@@ -31,8 +37,10 @@ class MarketModels:
     #self.market_prior = self.market_priors(self.mkt_data_reader.mcaps, self.delta, self.S)
 
     if model == "bl":
+      logging.info(f"Computing the expected returns and covar matrices given the Black-Litterman model")
       #mu_prior = self.compute_estimated_returns(self.historical_prices_df)
       S_prior = self.covar_matrix(self.historical_prices_df)
+      self.S = S_prior
       # delta compute the market implied risk aversion parameter
       self.delta = black_litterman.market_implied_risk_aversion(self.sp500)
 
@@ -67,14 +75,17 @@ class MarketModels:
 
   @staticmethod
   def compute_estimated_returns(mkt_data):
+    logging.info(f"Computing estimated returns using: 'mean_historical_return'")
     return mean_historical_return(mkt_data)
 
 
   @staticmethod
   def covar_matrix(mkt_data):
+    logging.info(f"Computing the sample covariance matrix using: Ledoit-Wolf shrinkage")
     return CovarianceShrinkage(mkt_data).ledoit_wolf()
 
 
   @staticmethod
   def market_priors(mcaps, delta, S):
+    logging.info(f"Computing the market implied prior returns using: mcaps, (delta) market implied risk aversion, (S) sample covar matrix")
     return black_litterman.market_implied_prior_returns(mcaps, delta, S)
