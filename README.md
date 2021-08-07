@@ -1,26 +1,7 @@
-Basic template for Data-Science projects with python
+Market models + asset allocation experiments
 ==============================
-Templating for data products & projects, inspired by the [cookiecutter](https://drivendata.github.io/cookiecutter-data-science/) for data science project, but 'watered-down' to the most basic but functional project structure.
-```
-.
-├── data
-├── LICENSE
-├── make-dirs.sh
-├── notebooks
-├── proj-name
-│   ├── data
-│   │   └── __init__.py
-│   ├── __init__.py
-│   ├── models
-│   │   └── __init__.py
-│   └── preprocessing
-│       └── __init__.py
-├── README.md
-├── requirements.txt
-└── setup.py
-```
 
-# Instructions for setting up a project after clonning the repository
+# Instructions for installing the 'stonks' package
 ## 1. Set-up a virtual environment
 Using `venv` and python3
 ```
@@ -65,12 +46,3 @@ from <YOUR_PROJECT_NAME>.data import test_imports
 test_imports.say_hello()
 >> hello
 ```
-
-# Optional
-## Add your own github repository to the project
-* List the current remote repos associated with the project
-```
-git remote
-git remote rm origin
-```
-* Now you can add your own github repository to the project

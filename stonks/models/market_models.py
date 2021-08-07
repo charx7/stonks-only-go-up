@@ -2,6 +2,7 @@ import yfinance as yf
 import pandas as pd
 import logging
 
+
 from pypfopt import black_litterman
 from pypfopt.expected_returns import mean_historical_return
 from pypfopt.black_litterman import BlackLittermanModel

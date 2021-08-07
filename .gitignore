@@ -33,3 +33,8 @@ var/
 
 # .pyc
 *.pyc
+
+# fama-french files
+fama_french.zip
+F-F_Research_Data_5_Factors_2x3_daily.CSV
+F-F_Research_Data_5_Factors_2x3.csv
