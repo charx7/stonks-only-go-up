@@ -24,6 +24,7 @@ class MarketModels:
     ff_factors_df: pd.DataFrame = pd.DataFrame()) -> None:
     self.historical_prices_df = historical_prices  # they have to be backfilled
     self.tickers = list(historical_prices.columns)  # tickers lst
+    self.model_summary = {}  # dictionary containingy the summary
 
     # data validation for views and confidences
     assert len(views_dict) == len(confidences), "Views and confidences need to be of the same size"
@@ -47,9 +48,10 @@ class MarketModels:
     self.ff_factors = ff_factors_df  # ff factors df (can get them form the dr class)
     self.df_stocks_ff = None
     self.risk_factors = list(self.ff_factors.columns)
-    self.er_fama = None  # expected returns of the ff model
+    self.er_fama_df = None  # df of expected returns of the ff model
     self.ff_betas = None  # ff-betas dict
     self.ff_scores = None  # ff-R^2 of the stocks
+    self.ret_ff = None  # annualized expected (mean) normal (not log) returns of the ff-model pd.Series
 
     if model == "bl":
       self.prepare_black_litterman(include_ff = False)  # call the prepare bl method
@@ -80,11 +82,11 @@ class MarketModels:
       ff_factors_ticker_df[ticker + "-RF"] = ff_factors_ticker_df[ticker] - ff_factors_ticker_df["RF"]
 
       # set up the linear regression problem
-      x_columns = list(filter(lambda ff_factor: ff_factor != "RF", list(ff_factors_ticker_cols)))  # fama french factors independent vars
+      x_columns = list(filter(lambda ff_factor: ff_factor != "RF", ff_factors_cols))
       Y = ff_factors_ticker_df.iloc[:,-1]  # dependent var ticker -rf
       X = (ff_factors_ticker_df)[x_columns]  # indep vars (risk factors)
 
-      reg = LinearRegression( fit_intercept = True).fit(X, Y) #regresion
+      reg = LinearRegression(fit_intercept = True).fit(X, Y) #regresion
       score = reg.score(X, Y)  # R^2 of the lin reg
       coefs = reg.coef_  # betas
       betas[ticker] = coefs
@@ -92,9 +94,11 @@ class MarketModels:
       er_fama[ticker] = np.sum(X * coefs, axis = 1) + ff_factors_ticker_df['RF']  # fama-french expected returns df
 
     # save the model output
-    self.er_fama = er_fama
+    self.er_fama_df = er_fama
     self.ff_betas = betas
     self.ff_scores = scores
+    # get the mean of the df, convert to normal returns and anualize with 252 trading days
+    self.ret_ff = (np.exp(self.er_fama_df.mean()) - 1) * 252
 
 
   def prepare_black_litterman(self, include_ff = False):
@@ -108,12 +112,12 @@ class MarketModels:
     self.market_prior = self.market_priors(self.mcaps, self.delta, S_prior)
 
     bl, ret_bl, S_bl = self.black_litterman(S_prior, self.market_prior, self.delta, self.views_dict, self.confidences)
-    self.model = {
+    self.model_summary = {
       "name": "Black-litterman",
       "model": bl
     }
-    self.ret_bl = ret_bl # mean matrix for black litterman
-    self.S_bl = S_bl # co-variance matrix for black litterman
+    self.ret_bl = ret_bl # mean matrix for black litterman, pd.Series
+    self.S_bl = S_bl # co-variance matrix for black litterman, pd.DataFrame
     
 
   @staticmethod
